@@ -1,0 +1,17 @@
+# Compile outputs
+/target/
+
+# Database files
+*.sqlite
+*.db
+
+# IDE settings
+.idea/
+*.iml
+.vscode/
+.settings/
+.classpath
+.project
+
+# Log files
+*.log
