@@ -99,6 +99,31 @@ public class CrudService {
     }
 
     public void delete(String table, Long id) {
+        if ("hojas_ruta_derivaciones".equals(table)) {
+            // Delete associated actas first
+            actaArchivamientoRepository.findAll().stream()
+                .filter(acta -> id.equals(acta.getIdDerivacion()))
+                .forEach(acta -> actaArchivamientoRepository.deleteById(acta.getIdActa()));
+        } else if ("documentos_ingresados".equals(table)) {
+            // Delete associated derivaciones
+            hojaRutaDerivacionRepository.findAll().stream()
+                .filter(deriv -> id.equals(deriv.getIdDocumento()))
+                .forEach(deriv -> delete("hojas_ruta_derivaciones", deriv.getIdDerivacion()));
+        } else if ("administrados".equals(table)) {
+            // Delete associated directions
+            administradoDireccionRepository.findAll().stream()
+                .filter(dir -> id.equals(dir.getIdAdministrado()))
+                .forEach(dir -> administradoDireccionRepository.deleteById(dir.getIdDireccion()));
+            // Delete associated documents
+            documentoIngresadoRepository.findAll().stream()
+                .filter(doc -> id.equals(doc.getIdAdministrado()))
+                .forEach(doc -> delete("documentos_ingresados", doc.getIdDocumento()));
+        } else if ("expedientes_generales".equals(table)) {
+            // Delete associated documents
+            documentoIngresadoRepository.findAll().stream()
+                .filter(doc -> id.equals(doc.getIdExpediente()))
+                .forEach(doc -> delete("documentos_ingresados", doc.getIdDocumento()));
+        }
         repositoryMap.get(table).deleteById(id);
     }
 

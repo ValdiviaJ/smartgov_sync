@@ -1,11 +1,17 @@
 package com.smartgov.sync.controller;
 
 import com.smartgov.sync.service.CrudService;
+import com.smartgov.sync.service.SupabaseStorageService;
+import com.smartgov.sync.repository.DocumentoIngresadoRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Map;
 import java.util.Optional;
 
@@ -16,6 +22,12 @@ public class CrudController {
 
     @Autowired
     private CrudService crudService;
+
+    @Autowired
+    private SupabaseStorageService supabaseStorageService;
+
+    @Autowired
+    private DocumentoIngresadoRepository documentoIngresadoRepository;
 
     // 1. GET ALL
     @GetMapping("/{table}")
@@ -92,5 +104,17 @@ public class CrudController {
         }
         crudService.delete(table, id);
         return ResponseEntity.ok(Map.of("message", "Registro con ID " + id + " eliminado exitosamente de " + table));
+    }
+
+    @PostMapping("/documentos/{id}/foto")
+    public ResponseEntity<?> subirFotoDocumento(
+            @PathVariable Long id,
+            @RequestParam("file") MultipartFile file) throws IOException {
+        
+        String nombreArchivo = "doc_" + id + "_" + System.currentTimeMillis() + ".jpg";
+        String urlPublica = supabaseStorageService.subirFoto(file.getBytes(), nombreArchivo);
+        String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
+        documentoIngresadoRepository.actualizarFotoPath(id, urlPublica, currentTime);
+        return ResponseEntity.ok(Map.of("url", urlPublica));
     }
 }
