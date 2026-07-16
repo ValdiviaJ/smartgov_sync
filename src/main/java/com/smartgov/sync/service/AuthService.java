@@ -73,6 +73,7 @@ public class AuthService {
         claims.put("nombre_completo", nombreCompleto);
         claims.put("id_oficina", idOficina);
         claims.put("nombre_oficina", nombreOficina);
+        claims.put("rol", user.getRol());
 
         String token = jwtTokenUtil.generateToken(username, claims);
 
@@ -87,6 +88,7 @@ public class AuthService {
         userData.put("nombre_completo", nombreCompleto);
         userData.put("id_oficina", idOficina);
         userData.put("nombre_oficina", nombreOficina);
+        userData.put("rol", user.getRol());
         response.put("user", userData);
 
         return Optional.of(response);

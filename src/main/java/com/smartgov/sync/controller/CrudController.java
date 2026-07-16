@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.smartgov.sync.model.DocumentoIngresado;
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -114,7 +115,17 @@ public class CrudController {
         String nombreArchivo = "doc_" + id + "_" + System.currentTimeMillis() + ".jpg";
         String urlPublica = supabaseStorageService.subirFoto(file.getBytes(), nombreArchivo);
         String currentTime = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss"));
-        documentoIngresadoRepository.actualizarFotoPath(id, urlPublica, currentTime);
+        
+        Optional<DocumentoIngresado> docOpt = documentoIngresadoRepository.findById(id);
+        String finalPath = urlPublica;
+        if (docOpt.isPresent()) {
+            String existingPath = docOpt.get().getFotoPath();
+            if (existingPath != null && !existingPath.trim().isEmpty()) {
+                finalPath = existingPath + "," + urlPublica;
+            }
+        }
+        
+        documentoIngresadoRepository.actualizarFotoPath(id, finalPath, currentTime);
         return ResponseEntity.ok(Map.of("url", urlPublica));
     }
 }

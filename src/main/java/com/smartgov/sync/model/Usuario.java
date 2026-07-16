@@ -19,6 +19,8 @@ public class Usuario {
 
     private Long idEmpleado;
 
+    private String rol;
+
     private String fechaActualizacion;
 
     @PrePersist
@@ -40,6 +42,9 @@ public class Usuario {
 
     public Long getIdEmpleado() { return idEmpleado; }
     public void setIdEmpleado(Long idEmpleado) { this.idEmpleado = idEmpleado; }
+
+    public String getRol() { return rol; }
+    public void setRol(String rol) { this.rol = rol; }
 
     public String getFechaActualizacion() { return fechaActualizacion; }
     public void setFechaActualizacion(String fechaActualizacion) { this.fechaActualizacion = fechaActualizacion; }

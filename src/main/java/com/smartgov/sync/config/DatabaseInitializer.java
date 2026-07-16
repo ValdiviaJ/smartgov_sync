@@ -70,13 +70,22 @@ public class DatabaseInitializer implements CommandLineRunner {
             u1.setUsername("admin");
             u1.setPassword(passwordEncoder.encode("admin123"));
             u1.setIdEmpleado(1L);
+            u1.setRol("ADMINISTRADOR");
             usuarioRepository.save(u1);
 
             Usuario u2 = new Usuario();
             u2.setUsername("user");
             u2.setPassword(passwordEncoder.encode("user123"));
             u2.setIdEmpleado(2L);
+            u2.setRol("ESPECIALISTA");
             usuarioRepository.save(u2);
+
+            Usuario u3 = new Usuario();
+            u3.setUsername("mesa");
+            u3.setPassword(passwordEncoder.encode("mesa123"));
+            u3.setIdEmpleado(1L); // Juan Pérez (Mesa de partes)
+            u3.setRol("MESA_DE_PARTES");
+            usuarioRepository.save(u3);
         }
 
         // 4. Seed Tipos Documento

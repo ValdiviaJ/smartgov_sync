@@ -82,6 +82,14 @@ public class CrudService {
             payload.put("fechaActualizacion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
         }
 
+        if ("usuarios".equals(table) && payload.containsKey("password")) {
+            String rawPassword = (String) payload.get("password");
+            if (rawPassword != null && !rawPassword.trim().isEmpty() && !rawPassword.startsWith("$2a$")) {
+                org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+                payload.put("password", encoder.encode(rawPassword));
+            }
+        }
+
         Object entity = objectMapper.convertValue(payload, clazz);
         return repo.save(entity);
     }
@@ -93,6 +101,14 @@ public class CrudService {
         String idFieldName = getIdFieldName(table);
         payload.put(idFieldName, id);
         payload.put("fechaActualizacion", LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
+        if ("usuarios".equals(table) && payload.containsKey("password")) {
+            String rawPassword = (String) payload.get("password");
+            if (rawPassword != null && !rawPassword.trim().isEmpty() && !rawPassword.startsWith("$2a$")) {
+                org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder encoder = new org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder();
+                payload.put("password", encoder.encode(rawPassword));
+            }
+        }
 
         Object entity = objectMapper.convertValue(payload, clazz);
         return repo.save(entity);
